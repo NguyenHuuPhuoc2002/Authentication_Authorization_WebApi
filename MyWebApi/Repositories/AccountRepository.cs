@@ -14,7 +14,7 @@ namespace MyWebApi.Repositories
     public class AccountRepository : IAccountRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager; 
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager;
 
@@ -26,22 +26,22 @@ namespace MyWebApi.Repositories
             _configuration = configuration;
             _roleManager = roleManager;
         }
-        public async Task<string> SignInAsync(SigninModel model)
+        public async Task<IdentityUser> SignInAsync(SigninModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             var passWordValid = await _userManager.CheckPasswordAsync(user, model.Password);
             if (user == null || !passWordValid)
             {
-                return string.Empty;
+                return null;
             }
 
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
             if (!result.Succeeded)
             {
-                return string.Empty;
+                return null;
             }
 
-            //thanh cong thi tao ra cac quyen
+            /*//thanh cong thi tao ra cac quyen
             var authClaim = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, model.Email),
@@ -67,9 +67,8 @@ namespace MyWebApi.Repositories
                 claims: authClaim,
                 signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
 
-                );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                );*/
+            return user;
         }
 
         public async Task<IdentityResult> SignUpAsync(SignUpModel model)
@@ -86,6 +85,7 @@ namespace MyWebApi.Repositories
 
             if(result.Succeeded)
             {
+                //kiểm tra role Customer có chưa
                 if (!await _roleManager.RoleExistsAsync(AppRole.Customer))
                 {
                     await _roleManager.CreateAsync(new IdentityRole(AppRole.Customer));

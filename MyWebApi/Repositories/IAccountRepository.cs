@@ -6,6 +6,6 @@ namespace MyWebApi.Repositories
     public interface IAccountRepository
     {
         public Task<IdentityResult> SignUpAsync(SignUpModel model);
-        public Task<string> SignInAsync(SigninModel model);
+        public Task<IdentityUser> SignInAsync(SigninModel model);
     }
 }

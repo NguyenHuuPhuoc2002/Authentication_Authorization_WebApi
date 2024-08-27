@@ -11,6 +11,19 @@ namespace MyWebApi.Data
 
         #region DbSet
         public DbSet<Book>? Books { get; set; }
+        public DbSet<RefreshToken>? RefreshTokens  { get; set; }
         #endregion
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Configure the relationship between ApplicationUser and RefreshToken
+            builder.Entity<RefreshToken>()
+                .HasOne(rt => rt.User)
+                .WithMany(u => u.RefreshTokens)
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Optional: Configure cascade delete
+        }
+
     }
 }

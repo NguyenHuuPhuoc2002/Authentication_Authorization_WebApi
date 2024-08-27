@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MyWebApi.Data;
 using MyWebApi.Helpers;
+using MyWebApi.Models;
 using MyWebApi.Repositories;
 using System.Text;
 
@@ -50,10 +51,11 @@ namespace MyWebApi
             });
 
             builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
-
+            builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("JWT"));
             //life cycle DI
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+            builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
     
             //Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
