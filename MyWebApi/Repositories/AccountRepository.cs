@@ -86,7 +86,6 @@ namespace MyWebApi.Repositories
 
             if(result.Succeeded)
             {
-                //kiểm tra role Customer có chưa
                 if (!await _roleManager.RoleExistsAsync(AppRole.Customer))
                 {
                     await _roleManager.CreateAsync(new IdentityRole(AppRole.Customer));
